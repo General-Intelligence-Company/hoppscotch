@@ -122,14 +122,20 @@ export default defineConfig({
         }
       },
     }),
-    StaticCopy({
-      targets: [
-        {
-          src: normalizePath(path.resolve(__dirname, "./.sitemap-gen/*")),
-          dest: normalizePath(path.resolve(__dirname, "./dist")),
-        },
-      ],
-    }),
+    // Only include sitemap copy target when VITE_BASE_URL is defined
+    // (sitemap generation is skipped when VITE_BASE_URL is not set)
+    ...(ENV.VITE_BASE_URL
+      ? [
+          StaticCopy({
+            targets: [
+              {
+                src: normalizePath(path.resolve(__dirname, "./.sitemap-gen/*")),
+                dest: normalizePath(path.resolve(__dirname, "./dist")),
+              },
+            ],
+          }),
+        ]
+      : []),
     Layouts({
       layoutsDirs: "../hoppscotch-common/src/layouts",
       defaultLayout: "default",
