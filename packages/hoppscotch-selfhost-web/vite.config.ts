@@ -109,13 +109,17 @@ export default defineConfig({
       dirs: ["../hoppscotch-common/src/pages", "./src/pages"],
       importMode: "async",
       onRoutesGenerated(routes) {
-        generateSitemap({
-          routes,
-          nuxtStyle: true,
-          allowRobots: true,
-          dest: ".sitemap-gen",
-          hostname: ENV.VITE_BASE_URL,
-        })
+        // Only generate sitemap if VITE_BASE_URL is defined
+        // This prevents build failures when .env is not present (e.g., during Docker builds)
+        if (ENV.VITE_BASE_URL) {
+          generateSitemap({
+            routes,
+            nuxtStyle: true,
+            allowRobots: true,
+            dest: ".sitemap-gen",
+            hostname: ENV.VITE_BASE_URL,
+          })
+        }
       },
     }),
     StaticCopy({
